@@ -5,6 +5,17 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
+    environment:
+      - PORT=8080
+      - PRODUCT_CATALOG_SERVICE_ADDR=productcatalogservice:3550
+      - CURRENCY_SERVICE_ADDR=currencyservice:7000
+      - CART_SERVICE_ADDR=cartservice:7070
+      - RECOMMENDATION_SERVICE_ADDR=recommendationservice:8080
+      - SHIPPING_SERVICE_ADDR=shippingservice:50051
+      - CHECKOUT_SERVICE_ADDR=checkoutservice:5050
+      - AD_SERVICE_ADDR=adservice:9555
+      - SHOPPING_ASSISTANT_SERVICE_ADDR=shoppingassistantservice:80
+      - ENABLE_PROFILER=0
     depends_on:
       - checkoutservice
       - adservice
@@ -18,6 +29,14 @@ services:
     build:
       context: ./src/checkoutservice
       dockerfile: Dockerfile
+    environment:
+      PORT: "5050"
+      PRODUCT_CATALOG_SERVICE_ADDR: "productcatalogservice:3550"
+      SHIPPING_SERVICE_ADDR: "shippingservice:50051"
+      PAYMENT_SERVICE_ADDR: "paymentservice:50051"
+      EMAIL_SERVICE_ADDR: "emailservice:5000"
+      CURRENCY_SERVICE_ADDR: "currencyservice:7000"
+      CART_SERVICE_ADDR: "cartservice:7070"
     depends_on:
       - cartservice
       - shippingservice
@@ -40,6 +59,9 @@ services:
     build:
       context: ./src/recommendationservice
       dockerfile: Dockerfile
+    environment:
+      PORT: "8080"
+      PRODUCT_CATALOG_SERVICE_ADDR: "productcatalogservice:3550"
     networks:
       - app-network
 
@@ -50,6 +72,7 @@ services:
     networks:
       - app-network
     environment:
+      - PORT=3550
       - DISABLE_PROFILER = "1"
 
   cartservice:
@@ -75,6 +98,9 @@ services:
     build:
       context: ./src/shippingservice
       dockerfile: Dockerfile
+    environment:
+      - PORT=50051
+      - DISABLE_PROFILER = "1"
     networks:
       - app-network
 
@@ -82,6 +108,9 @@ services:
     build:
       context: ./src/paymentservice
       dockerfile: Dockerfile
+    environment:
+      - PORT=50051
+      - DISABLE_PROFILER = "1"
     networks:
       - app-network
 
@@ -91,11 +120,17 @@ services:
       dockerfile: Dockerfile
     networks:
       - app-network
+    environment:
+      - PORT=7000
+      - DISABLE_PROFILER = "1"
 
   emailservice:
     build:
       context: ./src/emailservice
       dockerfile: Dockerfile
+    environment:
+      - PORT=8080
+      - DISABLE_PROFILER = "1"
     networks:
       - app-network
 
