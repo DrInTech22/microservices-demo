@@ -50,7 +50,7 @@ services:
 
   cartservice:
     build:
-      context: ./src/cartservice
+      context: ./src/cartservice/src
       dockerfile: Dockerfile
     environment:
       - REDIS_HOST=redis
