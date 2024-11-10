@@ -19,11 +19,11 @@ services:
       context: ./src/checkoutservice
       dockerfile: Dockerfile
     depends_on:
-      - cart
-      - shipping
-      - payment
-      - email
-      - currency
+      - cartservice
+      - shippingservice
+      - paymentservice
+      - emailservice
+      - currencyservice
     networks:
       - app-network
 
