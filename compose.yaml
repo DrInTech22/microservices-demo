@@ -50,8 +50,7 @@ services:
     networks:
       - app-network
     environment:
-      - name: DISABLE_PROFILER
-        value: "1"
+      - DISABLE_PROFILER = "1"
 
   cartservice:
     build:
