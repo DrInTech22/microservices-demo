@@ -6,16 +6,16 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - PORT=8080
-      - PRODUCT_CATALOG_SERVICE_ADDR=productcatalogservice:3550
-      - CURRENCY_SERVICE_ADDR=currencyservice:7000
-      - CART_SERVICE_ADDR=cartservice:7070
-      - RECOMMENDATION_SERVICE_ADDR=recommendationservice:8080
-      - SHIPPING_SERVICE_ADDR=shippingservice:50051
-      - CHECKOUT_SERVICE_ADDR=checkoutservice:5050
-      - AD_SERVICE_ADDR=adservice:9555
-      - SHOPPING_ASSISTANT_SERVICE_ADDR=shoppingassistantservice:80
-      - ENABLE_PROFILER=0
+      PORT: 8080
+      PRODUCT_CATALOG_SERVICE_ADDR: productcatalogservice:3550
+      CURRENCY_SERVICE_ADDR: currencyservice:7000
+      CART_SERVICE_ADDR: cartservice:7070
+      RECOMMENDATION_SERVICE_ADDR: recommendationservice:8080
+      SHIPPING_SERVICE_ADDR: shippingservice:50051
+      CHECKOUT_SERVICE_ADDR: checkoutservice:5050
+      AD_SERVICE_ADDR: adservice:9555
+      SHOPPING_ASSISTANT_SERVICE_ADDR: shoppingassistantservice:80
+      ENABLE_PROFILER: 0
     depends_on:
       - checkoutservice
       - adservice
@@ -30,13 +30,13 @@ services:
       context: ./src/checkoutservice
       dockerfile: Dockerfile
     environment:
-      PORT: "5050"
-      PRODUCT_CATALOG_SERVICE_ADDR: "productcatalogservice:3550"
-      SHIPPING_SERVICE_ADDR: "shippingservice:50051"
-      PAYMENT_SERVICE_ADDR: "paymentservice:50051"
-      EMAIL_SERVICE_ADDR: "emailservice:5000"
-      CURRENCY_SERVICE_ADDR: "currencyservice:7000"
-      CART_SERVICE_ADDR: "cartservice:7070"
+      PORT: 5050
+      PRODUCT_CATALOG_SERVICE_ADDR: productcatalogservice:3550
+      SHIPPING_SERVICE_ADDR: shippingservice:50051
+      PAYMENT_SERVICE_ADDR: paymentservice:50051
+      EMAIL_SERVICE_ADDR: emailservice:5000
+      CURRENCY_SERVICE_ADDR: currencyservice:7000
+      CART_SERVICE_ADDR: cartservice:7070
     depends_on:
       - cartservice
       - shippingservice
@@ -53,15 +53,15 @@ services:
     networks:
       - app-network
     environment:
-      - PORT=9555
+      PORT: 9555
 
   recommendationservice:
     build:
       context: ./src/recommendationservice
       dockerfile: Dockerfile
     environment:
-      PORT: "8080"
-      PRODUCT_CATALOG_SERVICE_ADDR: "productcatalogservice:3550"
+      PORT: 8080
+      PRODUCT_CATALOG_SERVICE_ADDR: productcatalogservice:3550
     networks:
       - app-network
 
@@ -72,16 +72,15 @@ services:
     networks:
       - app-network
     environment:
-      - PORT=3550
-      - DISABLE_PROFILER = "1"
+      PORT: 3550
+      DISABLE_PROFILER: 1
 
   cartservice:
     build:
       context: ./src/cartservice/src
       dockerfile: Dockerfile
     environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      REDIS_ADDR: redis-cart:6379
     depends_on:
       - redis
     networks:
@@ -99,8 +98,8 @@ services:
       context: ./src/shippingservice
       dockerfile: Dockerfile
     environment:
-      - PORT=50051
-      - DISABLE_PROFILER = "1"
+      PORT: 50051
+      DISABLE_PROFILER: 1
     networks:
       - app-network
 
@@ -109,8 +108,8 @@ services:
       context: ./src/paymentservice
       dockerfile: Dockerfile
     environment:
-      - PORT=50051
-      - DISABLE_PROFILER = "1"
+      PORT: 50051
+      DISABLE_PROFILER: 1
     networks:
       - app-network
 
@@ -121,16 +120,16 @@ services:
     networks:
       - app-network
     environment:
-      - PORT=7000
-      - DISABLE_PROFILER = "1"
+      PORT: 7000
+      DISABLE_PROFILER: 1
 
   emailservice:
     build:
       context: ./src/emailservice
       dockerfile: Dockerfile
     environment:
-      - PORT=8080
-      - DISABLE_PROFILER = "1"
+      PORT: 8080
+      DISABLE_PROFILER: 1
     networks:
       - app-network
 
@@ -139,14 +138,11 @@ services:
   #     context: ./src/loadgenerator
   #     dockerfile: Dockerfile
   #   environment:
-  #     - FRONTEND_ADDR = frontend:80
+  #     FRONTEND_ADDR: frontend:80
   #   networks:
   #     - app-network
 
 networks:
   app-network:
     driver: bridge
-
-
-
 
