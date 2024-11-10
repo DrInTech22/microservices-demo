@@ -1,0 +1,113 @@
+services:
+  frontend:
+    build:
+      context: ./src/frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - checkoutservice
+      - adservice
+      - recommendationservice
+      - productcatalogservice
+      - cartservice
+    networks:
+      - app-network
+
+  checkoutservice:
+    build:
+      context: ./src/checkoutservice
+      dockerfile: Dockerfile
+    depends_on:
+      - cart
+      - shipping
+      - payment
+      - email
+      - currency
+    networks:
+      - app-network
+
+  adservice:
+    build:
+      context: ./src/adservice
+      dockerfile: Dockerfile
+    networks:
+      - app-network
+
+  recommendationservice:
+    build:
+      context: ./src/recommendationservice
+      dockerfile: Dockerfile
+    networks:
+      - app-network
+
+  productcatalogservice:
+    build:
+      context: ./src/productcatalogservice
+      dockerfile: Dockerfile
+    networks:
+      - app-network
+
+  cartservice:
+    build:
+      context: ./src/cartservice
+      dockerfile: Dockerfile
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+    networks:
+      - app-network
+
+  redis:
+    image: redis:6.2
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+  shippingservice:
+    build:
+      context: ./src/shippingservice
+      dockerfile: Dockerfile
+    networks:
+      - app-network
+
+  paymentservice:
+    build:
+      context: ./src/paymentservice
+      dockerfile: Dockerfile
+    networks:
+      - app-network
+
+  currencyservice:
+    build:
+      context: ./src/currencyservice
+      dockerfile: Dockerfile
+    networks:
+      - app-network
+
+  emailservice:
+    build:
+      context: ./src/emailservice
+      dockerfile: Dockerfile
+    networks:
+      - app-network
+
+  loadgenerator:
+    build:
+      context: ./src/loadgenerator
+      dockerfile: Dockerfile
+    environment:
+      - FRONTEND_ADDR = frontend:80
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+
+
+
