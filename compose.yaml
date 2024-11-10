@@ -80,16 +80,12 @@ services:
       context: ./src/cartservice/src
       dockerfile: Dockerfile
     environment:
-      REDIS_ADDR: "redis-cart:6379"
-    depends_on:
-      - redis
+      REDIS_ADDR: "redis:6379"
     networks:
       - app-network
 
   redis:
     image: redis:6.2
-    ports:
-      - "6379:6379"
     networks:
       - app-network
 
