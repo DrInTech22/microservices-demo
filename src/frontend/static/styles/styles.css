@@ -48,7 +48,6 @@ header > div:nth-child(2) > .container {
 
 header .cart-link {
   position: relative;
-  display: block;
   margin-left: 25px;
   display: flex;
   flex-flow: column;
@@ -147,7 +146,6 @@ header .h-control select {
   display: flex;
   align-items: center;
   background: transparent;
-  border-radius: 0;
   border: 1px solid #acacac;
   width: 130px;
   height: 40px;
