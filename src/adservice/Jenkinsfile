@@ -28,6 +28,7 @@ pipeline {
                             -Dsonar.host.url=${SONAR_SERVER_URL} \
                             -Dsonar.login=${SONAR_AUTH_TOKEN} \
                             -Dsonar.java.source=17 \
+                            -Dorg.gradle.daemon=false
                     '''
                 }
             }
