@@ -35,8 +35,10 @@ pipeline {
         }
         stage ('Quality Check') {
             steps {
-                timeout(time: 5, unit: 'MINUTES'){
-                    waitForQualityGate abortPipeline: true, credentialsId: ${SONAR_AUTH_TOKEN}
+                withCredentials([vaultString(credentialsId: 'fe94f8cd-275e-4faa-b07a-9aaec7ad8b2c', variable: 'SONAR_TOKEN')]) {
+                    timeout(time: 5, unit: 'MINUTES'){
+                        waitForQualityGate abortPipeline: true, credentialsId: 'SONAR_TOKEN'
+                    }
                 }
             }
         }
