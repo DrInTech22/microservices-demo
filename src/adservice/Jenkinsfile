@@ -21,11 +21,13 @@ pipeline {
             steps {
                 dir('src/adservice') {
                     sh '''
+                        chmod +x ./gradlew
                         ./gradlew sonarqube \
                             -Dsonar.projectName=${IMAGE_NAME} \
                             -Dsonar.projectKey=${IMAGE_NAME} \
                             -Dsonar.host.url=${SONAR_SERVER_URL} \
-                            -Dsonar.login=${SONAR_AUTH_TOKEN}
+                            -Dsonar.login=${SONAR_AUTH_TOKEN} \
+                            -Dsonar.java.source=17 \
                     '''
                 }
             }
