@@ -22,7 +22,7 @@ pipeline {
                 dir('src/adservice') {
                     sh '''
                         chmod +x ./gradlew
-                        ./gradlew sonarqube \
+                        ./gradlew sonar \
                             -Dsonar.projectName=${IMAGE_NAME} \
                             -Dsonar.projectKey=${IMAGE_NAME} \
                             -Dsonar.host.url=${SONAR_SERVER_URL} \
