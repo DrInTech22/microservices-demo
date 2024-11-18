@@ -5,9 +5,11 @@ pipeline {
         nodejs 'nodejs'
     }
     environment {
-        SCANNER_HOME    = tool 'sonarqube-scanner'
-        IMAGE_NAME      = 'adservice'
-        DOCKERHUB_ID    = 'maestrops'
+        SCANNER_HOME     = tool 'sonarqube-scanner'
+        IMAGE_NAME       = 'adservice'
+        DOCKERHUB_ID     = 'maestrops'
+        SONAR_SERVER_URL =  'http://34.229.74.176:9000/'
+        SONAR_AUTH_TOKEN = credentials('fe94f8cd-275e-4faa-b07a-9aaec7ad8b2c')
     }
     stages {
         stage ('Git Checkout') {
@@ -18,20 +20,20 @@ pipeline {
         stage ('SonarQube Analysis') {
             steps {
                 dir('src/adservice') {
-                    withSonarQubeEnv('sonar-server') {
-                        sh '''
-                            $SCANNER_HOME/bin/sonar-scanner \
-                            -Dsonar.projectName=$IMAGE_NAME \
-                            -Dsonar.projectKey=$IMAGE_NAME
-                        '''
-                    }
+                    sh '''
+                        ./gradlew sonarqube \
+                            -Dsonar.projectName=${IMAGE_NAME} \
+                            -Dsonar.projectKey=${IMAGE_NAME} \
+                            -Dsonar.host.url=${SONAR_SERVER_URL} \
+                            -Dsonar.login=${SONAR_AUTH_TOKEN}
+                    '''
                 }
             }
         }
         stage ('Quality Check') {
             steps {
                 timeout(time: 5, unit: 'MINUTES'){
-                    waitForQualityGate abortPipeline: true, credentialsId: 'sonar-token'
+                    waitForQualityGate abortPipeline: true, credentialsId: 'fe94f8cd-275e-4faa-b07a-9aaec7ad8b2c'
                 }
             }
         }
