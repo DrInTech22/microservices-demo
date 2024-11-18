@@ -8,7 +8,6 @@ pipeline {
         SCANNER_HOME    = tool 'sonarqube-scanner'
         IMAGE_NAME      = 'cymbal-frontend'
         DOCKERHUB_ID    = 'maestrops'
-    //  DOCKERHUB_PASS  = credentials ('DOCKERHUB_PASS')
     }
     stages {
         stage ('Git Checkout') {
@@ -50,7 +49,7 @@ pipeline {
         stage("TRIVY Image Scan") {
             steps {
                 sh 'trivy image $DOCKERHUB_ID/$IMAGE_NAME:${BUILD_NUMBER} > trivyimage.txt' 
-                archiveArtifacts artifacts: 'trivyimage.txt' // Archive the report
+                archiveArtifacts artifacts: "trivy-$IMAGE_NAME-report.txt" // Archive the report
                 
             }
         }
@@ -59,8 +58,8 @@ pipeline {
             steps {
                 withCredentials([vaultString(credentialsId: 'DOCKERHUB_PASS', variable: 'DOCKER_PASS')]) {
                     sh '''
-                        docker tag cymbal-frontend $DOCKERHUB_ID/$IMAGE_NAME:${BUILD_NUMBER}
-                        docker tag cymbal-frontend $DOCKERHUB_ID/$IMAGE_NAME:latest
+                        docker tag $IMAGE_NAME $DOCKERHUB_ID/$IMAGE_NAME:${BUILD_NUMBER}
+                        docker tag $IMAGE_NAME $DOCKERHUB_ID/$IMAGE_NAME:latest
                         echo $DOCKER_PASS | docker login -u $DOCKERHUB_ID --password-stdin
                         docker push $DOCKERHUB_ID/$IMAGE_NAME:${BUILD_NUMBER}
                         docker push $DOCKERHUB_ID/$IMAGE_NAME:latest
@@ -87,4 +86,3 @@ pipeline {
         }
     }
 }
-// testing

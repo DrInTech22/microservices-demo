@@ -1,1 +1,89 @@
-// hellommsfdfhgfghjyui
+pipeline {
+    agent any
+    tools {
+        jdk 'JDK'
+        nodejs 'nodejs'
+    }
+    environment {
+        SCANNER_HOME    = tool 'sonarqube-scanner'
+        IMAGE_NAME      = 'adservice'
+        DOCKERHUB_ID    = 'maestrops'
+    }
+    stages {
+        stage ('Git Checkout') {
+            steps {
+                git branch: 'main', credentialsId: 'GITHUB', url: 'https://github.com/DrInTech22/microservices-demo'
+            }
+        }
+        stage ('SonarQube Analysis') {
+            steps {
+                dir('src/adservice') {
+                    withSonarQubeEnv('sonar-server') {
+                        sh '''
+                            $SCANNER_HOME/bin/sonar-scanner \
+                            -Dsonar.projectName=$IMAGE_NAME \
+                            -Dsonar.projectKey=$IMAGE_NAME
+                        '''
+                    }
+                }
+            }
+        }
+        stage ('Quality Check') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES'){
+                    waitForQualityGate abortPipeline: true, credentialsId: 'sonar-token'
+                }
+            }
+        }
+        stage ('Build Docker Image') {
+            steps {
+                dir ('src/adservice') {
+                    sh '''
+                        docker build -t $IMAGE_NAME .
+                        docker tag $IMAGE_NAME $DOCKERHUB_ID/$IMAGE_NAME:${BUILD_NUMBER}
+                        docker tag $IMAGE_NAME $DOCKERHUB_ID/$IMAGE_NAME:latest                     
+                        '''
+                }
+            }
+        }
+        stage("TRIVY Image Scan") {
+            steps {
+                sh 'trivy image $DOCKERHUB_ID/$IMAGE_NAME:${BUILD_NUMBER} > trivyimage.txt' 
+                archiveArtifacts artifacts: "trivy-$IMAGE_NAME-report.txt" // Archive the report
+                
+            }
+        }
+        
+        stage ('Push Image to DockerHub') {
+            steps {
+                withCredentials([vaultString(credentialsId: 'DOCKERHUB_PASS', variable: 'DOCKER_PASS')]) {
+                    sh '''
+                        docker tag $IMAGE_NAME $DOCKERHUB_ID/$IMAGE_NAME:${BUILD_NUMBER}
+                        docker tag $IMAGE_NAME $DOCKERHUB_ID/$IMAGE_NAME:latest
+                        echo $DOCKER_PASS | docker login -u $DOCKERHUB_ID --password-stdin
+                        docker push $DOCKERHUB_ID/$IMAGE_NAME:${BUILD_NUMBER}
+                        docker push $DOCKERHUB_ID/$IMAGE_NAME:latest
+                       '''
+                }  
+            }
+        }
+    }
+    post {
+        always {
+            echo 'Cleaning up workspace and removing Docker images...'
+            cleanWs()
+            sh '''
+                docker rmi $DOCKERHUB_ID/$IMAGE_NAME:${BUILD_NUMBER} || true
+                docker rmi $DOCKERHUB_ID/$IMAGE_NAME:latest || true
+                docker rmi $IMAGE_NAME || true
+            '''
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Check logs for details.'
+        }
+    }
+}
+
