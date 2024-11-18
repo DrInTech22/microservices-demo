@@ -26,7 +26,6 @@ pipeline {
                             ./gradlew sonar \
                                 -Dsonar.projectName=${IMAGE_NAME} \
                                 -Dsonar.projectKey=${IMAGE_NAME} \
-                                -Dsonar.host.url=${SONAR_SERVER_URL} \
                                 -Dsonar.java.source=17 \
                                 -Dorg.gradle.daemon=false
                         '''
@@ -37,7 +36,7 @@ pipeline {
         stage ('Quality Check') {
             steps {
                 timeout(time: 5, unit: 'MINUTES'){
-                    waitForQualityGate abortPipeline: true, credentialsId: 'fe94f8cd-275e-4faa-b07a-9aaec7ad8b2c'
+                    waitForQualityGate abortPipeline: true, credentialsId: ${SONAR_AUTH_TOKEN}
                 }
             }
         }
