@@ -50,6 +50,7 @@ pipeline {
         stage("TRIVY Image Scan") {
             steps {
                 sh 'trivy image $DOCKERHUB_ID/$IMAGE_NAME:${BUILD_NUMBER} > trivyimage.txt' 
+                archiveArtifacts artifacts: 'trivyimage.txt' // Archive the report
                 
             }
         }
@@ -68,5 +69,21 @@ pipeline {
             }
         }
     }
+    post {
+        always {
+            echo 'Cleaning up workspace and removing Docker images...'
+            cleanWs()
+            sh '''
+                docker rmi $DOCKERHUB_ID/$IMAGE_NAME:${BUILD_NUMBER} || true
+                docker rmi $DOCKERHUB_ID/$IMAGE_NAME:latest || true
+                docker rmi $IMAGE_NAME || true
+            '''
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Check logs for details.'
+        }
+    }
 }
-// testing webhook
