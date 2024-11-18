@@ -19,17 +19,18 @@ pipeline {
         }
         stage ('SonarQube Analysis') {
             steps {
-                dir('src/adservice') {
-                    sh '''
-                        chmod +x ./gradlew
-                        ./gradlew sonar \
-                            -Dsonar.projectName=${IMAGE_NAME} \
-                            -Dsonar.projectKey=${IMAGE_NAME} \
-                            -Dsonar.host.url=${SONAR_SERVER_URL} \
-                            -Dsonar.login=${SONAR_AUTH_TOKEN} \
-                            -Dsonar.java.source=17 \
-                            -Dorg.gradle.daemon=false
-                    '''
+                withSonarQubeEnv('sonar-server') {
+                    dir('src/adservice') {
+                        sh '''
+                            chmod +x ./gradlew
+                            ./gradlew sonar \
+                                -Dsonar.projectName=${IMAGE_NAME} \
+                                -Dsonar.projectKey=${IMAGE_NAME} \
+                                -Dsonar.host.url=${SONAR_SERVER_URL} \
+                                -Dsonar.java.source=17 \
+                                -Dorg.gradle.daemon=false
+                        '''
+                    }
                 }
             }
         }
