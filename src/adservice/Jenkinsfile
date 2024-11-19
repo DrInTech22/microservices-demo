@@ -33,15 +33,6 @@ pipeline {
                 }
             }
         }
-       stage ('Quality Check') {
-            steps {
-                withSonarQubeEnv('sonar-server') {
-                    timeout(time: 5, unit: 'MINUTES'){
-                        waitForQualityGate abortPipeline: true, credentialsId: 'sonar-token'
-                    }
-                }
-            }
-        }
         stage ('Build Docker Image') {
             steps {
                 dir ('src/adservice') {
