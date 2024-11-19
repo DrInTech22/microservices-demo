@@ -22,7 +22,7 @@ pipeline {
                     withCredentials([string(credentialsId: 'sonar_token', variable: 'SONAR_AUTH_TOKEN')]) {
                         sh '''
                             export PATH=$PATH:~/.dotnet/tools
-                            dotnet sonarscanner begin \
+                            dotnet cartservice.sln sonarscanner begin \
                             /k:$IMAGE_NAME \
                             /n:$IMAGE_NAME \
                             /d:sonar.host.url=$SONAR_SERVER_URL \
