@@ -55,7 +55,7 @@ pipeline {
 
                             # Build the solution
                             ls ${WORKSPACE}/src/cartservice
-                            "${WORKSPACE}/.dotnet/dotnet" build src/cartservice
+                            "${WORKSPACE}/.dotnet/dotnet" build .
 
                             # End SonarQube analysis
                             "${HOME}/.dotnet/tools/dotnet-sonarscanner" end \
