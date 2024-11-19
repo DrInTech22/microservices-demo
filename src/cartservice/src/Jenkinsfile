@@ -51,10 +51,10 @@ pipeline {
                                 /k:"$IMAGE_NAME" \
                                 /n:"$IMAGE_NAME" \
                                 /d:sonar.host.url="$SONAR_SERVER_URL" \
-                                /d:sonar.token="$SONAR_AUTH_TOKEN"
+                                /d:sonar.login="$SONAR_AUTH_TOKEN"
 
                             # Build the solution
-                            ls ${WORKSPACE}
+                            ls ${WORKSPACE}/src/cartservice/src
                             "${WORKSPACE}/.dotnet/dotnet" build .
 
                             # End SonarQube analysis
