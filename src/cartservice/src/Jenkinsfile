@@ -4,10 +4,11 @@ pipeline {
         jdk 'JDK'
         nodejs 'nodejs'
     }
-    environment {
-        SCANNER_HOME    = tool 'sonarqube-scanner'
-        IMAGE_NAME      = 'cartservice'
-        DOCKERHUB_ID    = 'maestrops'
+    environment { 
+        SCANNER_HOME     = tool 'sonarqube-scanner'
+        IMAGE_NAME       = 'cartservice'
+        DOCKERHUB_ID     = 'maestrops'
+        SONAR_SERVER_URL = 'http://34.229.74.176:9000/'
     }
     stages {
         stage ('Git Checkout') {
@@ -18,16 +19,17 @@ pipeline {
         stage ('SonarQube Analysis') {
             steps {
                 dir('src/cartservice/src') {
-                    withSonarQubeEnv('sonar-server') {
+                    withCredentials([string(credentialsId: 'sonar_token', variable: 'SONAR_AUTH_TOKEN')]) {
                         sh '''
                             export PATH=$PATH:~/.dotnet/tools
                             dotnet sonarscanner begin \
                             /k:$IMAGE_NAME \
-                            /n:$IMAGE_NAME 
+                            /n:$IMAGE_NAME \
+                            /d:sonar.host.url=$SONAR_SERVER_URL \
+                            /d:sonar.login=$SONAR_AUTH_TOKEN
                             dotnet build cartservice.sln
                             dotnet sonarscanner end
                             '''
-                    }
                 }
             }
         }
