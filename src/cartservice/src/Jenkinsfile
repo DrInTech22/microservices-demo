@@ -20,6 +20,7 @@ pipeline {
                 dir('src/cartservice/src') {
                     withSonarQubeEnv('sonar-server') {
                         sh '''
+                            export PATH=$PATH:~/.dotnet/tools
                             dotnet sonarscanner begin \
                             /k:$IMAGE_NAME \
                             /n:$IMAGE_NAME \
