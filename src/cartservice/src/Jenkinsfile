@@ -26,9 +26,9 @@ pipeline {
                             /k:$IMAGE_NAME \
                             /n:$IMAGE_NAME \
                             /d:sonar.host.url=$SONAR_SERVER_URL \
-                            /d:sonar.login=$SONAR_AUTH_TOKEN
+                            /d:sonar.token=$SONAR_AUTH_TOKEN
                             dotnet build cartservice.sln
-                            dotnet sonarscanner end
+                            dotnet sonarscanner end /d:sonar.token=$SONAR_AUTH_TOKEN
                             '''
                     }       
                 }
