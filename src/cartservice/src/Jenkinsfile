@@ -20,18 +20,22 @@ pipeline {
             steps {
                 sh '''
                     # Install .NET tools locally to the workspace
-                    export PATH="${WORKSPACE}/.dotnet:${WORKSPACE}/.dotnet/tools:$PATH"
-
+                    export DOTNET_INSTALL_DIR="${WORKSPACE}/.dotnet"
+                    export PATH="${DOTNET_INSTALL_DIR}:${DOTNET_INSTALL_DIR}/tools:$PATH"
+                    
                     # Download .NET SDK locally to the workspace if not already present
-                    if [ ! -d "${WORKSPACE}/.dotnet" ]; then
-                        mkdir -p "${WORKSPACE}/.dotnet"
+                    if [ ! -d "${DOTNET_INSTALL_DIR}" ]; then
+                        mkdir -p "${DOTNET_INSTALL_DIR}"
                         curl -o dotnet-install.sh https://dot.net/v1/dotnet-install.sh
                         chmod +x dotnet-install.sh
-                        ./dotnet-install.sh --install-dir "${WORKSPACE}/.dotnet" --version latest
+                        ./dotnet-install.sh --install-dir "${DOTNET_INSTALL_DIR}" --version latest
                     fi
 
+                    # Check if dotnet is correctly installed
+                    "${DOTNET_INSTALL_DIR}/dotnet" --version
+
                     # Install the SonarScanner .NET tool to the workspace
-                    "${WORKSPACE}/.dotnet/dotnet" tool install dotnet-sonarscanner --tool-path "${WORKSPACE}/.dotnet/tools" --version latest
+                    "${DOTNET_INSTALL_DIR}/dotnet" tool install dotnet-sonarscanner --tool-path "${DOTNET_INSTALL_DIR}/tools" --version latest
                 '''
             }
         }
