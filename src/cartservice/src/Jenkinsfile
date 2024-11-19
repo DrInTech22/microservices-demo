@@ -18,25 +18,23 @@ pipeline {
         }
         stage('Setup .NET and Sonar Scanner') {
             steps {
-                sh '''
-                    # Install .NET tools locally to the workspace
-                    export DOTNET_INSTALL_DIR="${WORKSPACE}/.dotnet"
-                    export PATH="${DOTNET_INSTALL_DIR}:${DOTNET_INSTALL_DIR}/tools:$PATH"
-                    
-                    # Download .NET SDK locally to the workspace if not already present
-                    if [ ! -d "${DOTNET_INSTALL_DIR}" ]; then
-                        mkdir -p "${DOTNET_INSTALL_DIR}"
-                        curl -o dotnet-install.sh https://dot.net/v1/dotnet-install.sh
+                    sh '''
+                        # Download and install .NET SDK locally
+                        mkdir -p ${WORKSPACE}/.dotnet
+                        wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh
                         chmod +x dotnet-install.sh
-                        ./dotnet-install.sh --install-dir "${DOTNET_INSTALL_DIR}" --version latest
-                    fi
-
-                    # Check if dotnet is correctly installed
-                    "${DOTNET_INSTALL_DIR}/dotnet" --version
-
-                    # Install the SonarScanner .NET tool to the workspace
-                    "${DOTNET_INSTALL_DIR}/dotnet" tool install dotnet-sonarscanner --tool-path "${DOTNET_INSTALL_DIR}/tools" --version latest
-                '''
+                        ./dotnet-install.sh --channel 8.0 --install-dir ${WORKSPACE}/.dotnet
+                        
+                        # Add dotnet to PATH
+                        export PATH="${WORKSPACE}/.dotnet:$PATH"
+                        
+                        # Install SonarScanner globally for the current user
+                        ${WORKSPACE}/.dotnet/dotnet tool install --global dotnet-sonarscanner
+                        
+                        # Verify installations
+                        ${WORKSPACE}/.dotnet/dotnet --version
+                        ${HOME}/.dotnet/tools/dotnet-sonarscanner begin --help || true
+                    '''
             }
         }
         stage ('SonarQube Analysis') {
@@ -50,7 +48,7 @@ pipeline {
                             echo $PATH
 
                             # Begin SonarQube analysis
-                            "${WORKSPACE}/.dotnet/tools/dotnet-sonarscanner" begin \
+                            "${HOME}/.dotnet/tools/dotnet-sonarscanner" begin \
                                 /k:"$IMAGE_NAME" \
                                 /n:"$IMAGE_NAME" \
                                 /d:sonar.host.url="$SONAR_SERVER_URL" \
@@ -60,7 +58,7 @@ pipeline {
                             "${WORKSPACE}/.dotnet/dotnet" build cartservice.sln
 
                             # End SonarQube analysis
-                            "${WORKSPACE}/.dotnet/tools/dotnet-sonarscanner" end \
+                            "${HOME}/.dotnet/tools/dotnet-sonarscanner" end \
                                 /d:sonar.login="$SONAR_AUTH_TOKEN"
                         '''
                     }       
