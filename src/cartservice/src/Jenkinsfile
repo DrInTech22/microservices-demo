@@ -21,7 +21,7 @@ pipeline {
                 dir('src/cartservice/src') {
                     withCredentials([string(credentialsId: 'sonar_token', variable: 'SONAR_AUTH_TOKEN')]) {
                         sh '''
-                            export PATH=/var/lib/jenkins/.dotnet/tools:$PATH
+                            export PATH=/home/ubuntu/.dotnet/tools:$PATH
                             dotnet sonarscanner begin \
                             /k:$IMAGE_NAME \
                             /n:$IMAGE_NAME \
