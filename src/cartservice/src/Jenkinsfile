@@ -33,7 +33,6 @@ pipeline {
                         
                         # Verify installations
                         ${WORKSPACE}/.dotnet/dotnet --version
-                        ${HOME}/.dotnet/tools/dotnet-sonarscanner begin --help || true
                     '''
             }
         }
@@ -55,7 +54,7 @@ pipeline {
                                 /d:sonar.token="$SONAR_AUTH_TOKEN"
 
                             # Build the solution
-                            "${WORKSPACE}/.dotnet/dotnet" build cartservice.sln
+                            "${WORKSPACE}/.dotnet/dotnet" src/cartservice/src
 
                             # End SonarQube analysis
                             "${HOME}/.dotnet/tools/dotnet-sonarscanner" end \
