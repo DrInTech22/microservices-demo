@@ -20,11 +20,10 @@ pipeline {
                 dir('src/cartservice/src') {
                     withSonarQubeEnv('sonar-server') {
                         sh '''
-                            $SCANNER_HOME/bin/sonar-scanner \
-                            .MSBuild.exe begin -k:\
-                            -Dsonar.projectName=$IMAGE_NAME \
-                            -Dsonar.projectKey=$IMAGE_NAME
-                        '''
+                            dotnet sonarscanner begin \
+                            /k:$IMAGE_NAME \
+                            /n:$IMAGE_NAME \
+                            '''
                     }
                 }
             }

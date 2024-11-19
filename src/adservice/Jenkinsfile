@@ -9,7 +9,6 @@ pipeline {
         IMAGE_NAME       = 'adservice'
         DOCKERHUB_ID     = 'maestrops'
         SONAR_SERVER_URL =  'http://34.229.74.176:9000/'
-        SONAR_AUTH_TOKEN = credentials('fe94f8cd-275e-4faa-b07a-9aaec7ad8b2c')
     }
     stages {
         stage ('Git Checkout') {
