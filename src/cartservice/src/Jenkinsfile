@@ -52,14 +52,14 @@ pipeline {
                                 /k:"$IMAGE_NAME" \
                                 /n:"$IMAGE_NAME" \
                                 /d:sonar.host.url="$SONAR_SERVER_URL" \
-                                /d:sonar.login="$SONAR_AUTH_TOKEN"
+                                /d:sonar.token="$SONAR_AUTH_TOKEN"
 
                             # Build the solution
                             "${WORKSPACE}/.dotnet/dotnet" build cartservice.sln
 
                             # End SonarQube analysis
                             "${HOME}/.dotnet/tools/dotnet-sonarscanner" end \
-                                /d:sonar.login="$SONAR_AUTH_TOKEN"
+                                /d:sonar.token="$SONAR_AUTH_TOKEN"
                         '''
                     }       
                 }
