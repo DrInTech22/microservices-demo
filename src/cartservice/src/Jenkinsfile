@@ -23,7 +23,7 @@ pipeline {
                             export PATH=$PATH:~/.dotnet/tools
                             dotnet sonarscanner begin \
                             /k:$IMAGE_NAME \
-                            /n:$IMAGE_NAME \
+                            /n:$IMAGE_NAME 
                             dotnet build
                             dotnet sonarscanner end
                             '''
