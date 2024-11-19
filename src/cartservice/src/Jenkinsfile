@@ -54,8 +54,8 @@ pipeline {
                                 /d:sonar.login="$SONAR_AUTH_TOKEN"
 
                             # Build the solution
-                            ls ${WORKSPACE}/src/cartservice/src
-                            "${WORKSPACE}/.dotnet/dotnet" build src/cartservice/cartservice.sln
+                            ls ${WORKSPACE}/src/cartservice
+                            "${WORKSPACE}/.dotnet/dotnet" build src/cartservice
 
                             # End SonarQube analysis
                             "${HOME}/.dotnet/tools/dotnet-sonarscanner" end \
