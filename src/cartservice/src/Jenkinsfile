@@ -6,7 +6,7 @@ pipeline {
     }
     environment { 
         SCANNER_HOME     = tool 'sonarqube-scanner'
-        IMAGE_NAME       = 'cartservice'
+        IMAGE_NAME       = "cartservice"
         DOCKERHUB_ID     = 'maestrops'
         SONAR_SERVER_URL = 'http://34.229.74.176:9000/'
     }
