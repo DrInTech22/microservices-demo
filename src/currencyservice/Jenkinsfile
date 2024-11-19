@@ -6,7 +6,7 @@ pipeline {
     }
     environment {
         SCANNER_HOME    = tool 'sonarqube-scanner'
-        IMAGE_NAME      = 'cartservice'
+        IMAGE_NAME      = 'currencyservice'
         DOCKERHUB_ID    = 'maestrops'
     }
     stages {
@@ -17,11 +17,10 @@ pipeline {
         }
         stage ('SonarQube Analysis') {
             steps {
-                dir('src/cartservice/src') {
+                dir('src/currencyservice') {
                     withSonarQubeEnv('sonar-server') {
                         sh '''
                             $SCANNER_HOME/bin/sonar-scanner \
-                            .MSBuild.exe begin -k:\
                             -Dsonar.projectName=$IMAGE_NAME \
                             -Dsonar.projectKey=$IMAGE_NAME
                         '''
@@ -31,7 +30,7 @@ pipeline {
         }
         stage ('Build Docker Image') {
             steps {
-                dir ('src/cartservice/src') {
+                dir ('src/currencyservice') {
                     sh '''
                         docker build -t $IMAGE_NAME .
                         docker tag $IMAGE_NAME $DOCKERHUB_ID/$IMAGE_NAME:${BUILD_NUMBER}
