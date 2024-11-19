@@ -50,8 +50,8 @@ pipeline {
         }
         stage("TRIVY Image Scan") {
             steps {
-                sh 'trivy image $DOCKERHUB_ID/$IMAGE_NAME:${BUILD_NUMBER} > trivy-$IMAGE_NAME-report.txt' 
-                archiveArtifacts artifacts: "trivy-$IMAGE_NAME-report.txt" // Archive the report
+                sh 'trivy image $DOCKERHUB_ID/$IMAGE_NAME:${BUILD_NUMBER} > $IMAGE_NAME-scan-report.txt' 
+                archiveArtifacts artifacts: "$IMAGE_NAME-scan-report.txt" // Archive the report
                 
             }
         }
@@ -78,6 +78,7 @@ pipeline {
                 docker rmi $DOCKERHUB_ID/$IMAGE_NAME:${BUILD_NUMBER} || true
                 docker rmi $DOCKERHUB_ID/$IMAGE_NAME:latest || true
                 docker rmi $IMAGE_NAME || true
+                docker system prune -af --filter="until 24 hours"
             '''
         }
         success {
@@ -88,3 +89,4 @@ pipeline {
         }
     }
 }
+
